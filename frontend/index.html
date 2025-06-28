@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:8000/assets/thesis.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:8000/assets/thesis.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="http://localhost:8000/assets/thesis.png">
+  <title>Thesis Research Assistant</title>
+  <link rel="stylesheet" href="http://localhost:8000/static/style.css">
+
+</head>
+<body>
+  <div class="container">
+    <h1>Thesis Research Assistant</h1>
+    <p class="subtitle">Enter a research topic to generate a detailed, AI-powered 20–25 page report.</p>
+
+    <input type="text" id="topicInput" placeholder="e.g., Impact of AI in Education" />
+    <button onclick="startResearch()">Start Research</button>
+
+    <div id="loading" class="loading" style="display: none;">
+      <div class="spinner"></div>
+      <p>Generating report... please wait</p>
+    </div>
+
+    <div id="outputSection" style="display: none;">
+      <h2>Research Summary Preview</h2>
+      <div id="reportText" class="report-box"></div>
+      <a id="downloadLink" href="#" download class="download-btn">Download PDF</a>
+    </div>
+  </div>
+
+  <script src="http://localhost:8000/static/script.js"></script>
+</body>
+</html>
