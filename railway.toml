@@ -2,8 +2,8 @@
 builder = "nixpacks"
 
 [deploy]
-startCommand = "python test_server.py"
-healthcheckPath = "/health"
+startCommand = "python production_server.py"
+healthcheckPath = "/api"
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
 

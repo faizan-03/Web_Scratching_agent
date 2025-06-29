@@ -1,0 +1,4 @@
+# Add these dependencies one by one if Step 1 works
+fpdf==2.7.6
+google-generativeai==0.3.2
+crewai==0.28.8
