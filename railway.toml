@@ -3,9 +3,10 @@ builder = "nixpacks"
 
 [deploy]
 startCommand = "cd backend && python run_server.py"
-healthcheckPath = "/"
+healthcheckPath = "/health"
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
 
 [environments.production.variables]
 PORT = "8000"
+RAILWAY_ENVIRONMENT = "production"

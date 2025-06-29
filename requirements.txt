@@ -1,9 +1,9 @@
-fastapi
-uvicorn[standard]
+fastapi>=0.104.1
+uvicorn[standard]>=0.24.0
 beautifulsoup4
 requests
 fpdf
 python-dotenv
 google-generativeai
 crewai
-pydantic
+pydantic>=2.0.0

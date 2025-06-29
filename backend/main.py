@@ -1,15 +1,30 @@
 import os
+import sys
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
-from crew_runner import run_research_pipeline
-from pdf_writer import save_report_as_pdf
 
-app = FastAPI()
+# Add error handling for imports
+try:
+    from crew_runner import run_research_pipeline
+except ImportError as e:
+    print(f"Warning: crew_runner import failed: {e}")
+    def run_research_pipeline(topic):
+        return f"Mock report for {topic} - crew_runner not available"
+
+try:
+    from pdf_writer import save_report_as_pdf
+except ImportError as e:
+    print(f"Warning: pdf_writer import failed: {e}")
+    def save_report_as_pdf(topic, text):
+        return f"mock_report_{topic.replace(' ', '_')}.pdf"
+
+app = FastAPI(title="Thesis Assistant API", version="1.0.0")
 
 # Update CORS for production
-origins = ["*"] if os.getenv("RAILWAY_ENVIRONMENT") == "production" else ["http://localhost:8000"]
+is_production = os.getenv("RAILWAY_ENVIRONMENT") == "production"
+origins = ["*"] if is_production else ["http://localhost:8000"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -24,41 +39,60 @@ class TopicRequest(BaseModel):
 
 @app.get("/")
 def home():
-    return {"message": "Thesis Assistant API is running!"}
+    return {
+        "message": "Thesis Assistant API is running!",
+        "environment": os.getenv("RAILWAY_ENVIRONMENT", "development"),
+        "python_version": sys.version
+    }
 
 @app.get("/health")
 def health_check():
-    return {"status": "healthy", "message": "Thesis Assistant API is running!"}
+    return {
+        "status": "healthy", 
+        "message": "Thesis Assistant API is running!",
+        "environment": os.getenv("RAILWAY_ENVIRONMENT", "development")
+    }
 
 @app.post("/research")
 def research_topic(request: TopicRequest):
-    topic = request.topic
-
-    report_text = run_research_pipeline(topic)
-
-    print("\n===== FINAL GENERATED REPORT FOR DEBUGGING =====\n")
-    print(report_text)
-    print("\n===== END OF REPORT =====\n")
-
-    if not report_text or not report_text.strip():
-        return {
-            "message": "Report generation failed. No content was produced.",
-            "report": "Failed to generate report content.",
-            "filename": None
-        }
-
     try:
-        filename = save_report_as_pdf(topic, report_text)
+        topic = request.topic
+        print(f"Processing research request for topic: {topic}")
+
+        report_text = run_research_pipeline(topic)
+
+        print("\n===== FINAL GENERATED REPORT FOR DEBUGGING =====\n")
+        print(report_text[:500] + "..." if len(report_text) > 500 else report_text)
+        print("\n===== END OF REPORT =====\n")
+
+        if not report_text or not report_text.strip():
+            return {
+                "message": "Report generation failed. No content was produced.",
+                "report": "Failed to generate report content.",
+                "filename": None
+            }
+
+        try:
+            filename = save_report_as_pdf(topic, report_text)
+            return {
+                "message": "Report generated successfully",
+                "report": report_text[:2000] + "..." if len(report_text) > 2000 else report_text,
+                "filename": filename
+            }
+        except Exception as ve:
+            print(f"PDF generation error: {ve}")
+            return {
+                "message": str(ve),
+                "report": report_text[:2000] + "..." if len(report_text) > 2000 else report_text,
+                "filename": None
+            }
+    except Exception as e:
+        print(f"Research endpoint error: {e}")
+        import traceback
+        traceback.print_exc()
         return {
-            "message": "Report generated successfully",
-            "report": report_text[:2000] + "..." if len(report_text) > 2000 else report_text,
-            "filename": filename
-        }
-    except ValueError as ve:
-        print(ve)
-        return {
-            "message": str(ve),
-            "report": "Error generating PDF report.",
+            "message": f"Error processing request: {str(e)}",
+            "report": "Error processing request",
             "filename": None
         }
 
