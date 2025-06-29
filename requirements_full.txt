@@ -1,0 +1,10 @@
+# Phase 2: Full requirements (use after test server works)
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+beautifulsoup4==4.12.2
+requests==2.31.0
+fpdf==2.7.6
+python-dotenv==1.0.0
+google-generativeai==0.3.2
+crewai==0.28.8
+pydantic==2.5.3

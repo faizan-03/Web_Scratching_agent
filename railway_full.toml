@@ -1,8 +1,10 @@
+# Phase 2: Full application (use after test server works)
+
 [build]
 builder = "nixpacks"
 
 [deploy]
-startCommand = "python test_server.py"
+startCommand = "cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT"
 healthcheckPath = "/health"
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
