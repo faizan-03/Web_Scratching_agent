@@ -1,3 +1,6 @@
+// Get the current domain and port
+const API_BASE = window.location.origin;
+
 async function startResearch() {
   const topic = document.getElementById("topicInput").value.trim();
   if (!topic) {
@@ -9,7 +12,7 @@ async function startResearch() {
   document.getElementById("outputSection").style.display = "none";
 
   try {
-    const response = await fetch("http://localhost:8000/research", {
+    const response = await fetch(`${API_BASE}/research`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ topic: topic })
@@ -25,7 +28,7 @@ async function startResearch() {
       document.getElementById("reportText").textContent = data.report;
 
       const download = document.getElementById("downloadLink");
-      download.href = `http://localhost:8000/download/${data.filename}`;
+      download.href = `${API_BASE}/download/${data.filename}`;
       download.style.display = "inline-block";
 
       document.getElementById("loading").style.display = "none";

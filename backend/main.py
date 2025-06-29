@@ -1,16 +1,19 @@
+import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from crew_runner import run_research_pipeline
 from pdf_writer import save_report_as_pdf
-import os
 
 app = FastAPI()
 
+# Update CORS for production
+origins = ["*"] if os.getenv("RAILWAY_ENVIRONMENT") == "production" else ["http://localhost:8000"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -22,6 +25,10 @@ class TopicRequest(BaseModel):
 @app.get("/")
 def home():
     return {"message": "Thesis Assistant API is running!"}
+
+@app.get("/health")
+def health_check():
+    return {"status": "healthy", "message": "Thesis Assistant API is running!"}
 
 @app.post("/research")
 def research_topic(request: TopicRequest):

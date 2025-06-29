@@ -1,8 +1,9 @@
 fastapi
-uvicorn
+uvicorn[standard]
 beautifulsoup4
 requests
 fpdf
 python-dotenv
 google-generativeai
 crewai
+pydantic
